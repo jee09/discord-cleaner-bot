@@ -6,7 +6,7 @@ const {
   PermissionsBitField,
 } = require('discord.js');
 
-const BAD_CHARS = ['ㅗ'];
+const BAD_CHARS = ['ㅗ', '낙'];
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -27,12 +27,25 @@ client.on('messageCreate', async (message) => {
   const content = message.content ?? '';
   if (!BAD_CHARS.some((c) => content.includes(c))) return;
 
-  const HEART = '💖';
+  const CATS = ['🐈', '🐈‍⬛'];
+  let catIndex = 0;
 
-  const cleaned = BAD_CHARS.reduce(
-    (acc, c) => acc.split(c).join(HEART),
-    content
-  ).trim();
+  let cleaned = content;
+  // '낙'을 '낛'으로 먼저 치환
+  cleaned = cleaned.split('낙').join('낛');
+  // 나머지 BAD_CHARS는 고양이 이모지로 번갈아가며 치환
+  for (const badChar of BAD_CHARS.filter((c) => c !== '낙')) {
+    const parts = cleaned.split(badChar);
+    cleaned = parts.reduce((result, part, index) => {
+      if (index < parts.length - 1) {
+        const cat = CATS[catIndex % CATS.length];
+        catIndex++;
+        return result + part + cat;
+      }
+      return result + part;
+    }, '');
+  }
+  cleaned = cleaned.trim();
 
   const me = message.guild.members.me;
   const perms = message.channel.permissionsFor(me);
