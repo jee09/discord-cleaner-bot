@@ -13,5 +13,8 @@
     "discord.js": "^14.25.1",
     "dotenv": "^17.2.3"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.10"
+  }
 }
